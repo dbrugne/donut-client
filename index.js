@@ -1,10 +1,14 @@
 var _ = require('underscore');
-var Pomelo = require('./libs/pomelo');
-var Api = require('./libs/api');
+var Backbone = require('backbone');
 
+var Client = require('./lib/ws/index');
+var CurrentUser = require('./lib/models/current-user');
+var Groups = require('./lib/collections/groups');
+var Ones = require('./lib/collections/ones');
+var Rooms = require('./lib/collections/rooms');
 
 module.exports = function (options) {
-  // options
+  options = options || {};
   options = _.defaults(options, {
     device: '',
     host: '',
@@ -16,29 +20,20 @@ module.exports = function (options) {
     sio: {}
   });
 
-  // pomelo
-  var pomelo = Pomelo(options);
+  // new event emitter as facade
+  var app = _.extend({}, Backbone.Events);
+  options.app = app;
 
-  // API
-  var api = Api(pomelo, options);
+  // ws client
+  app.client = Client(options);
 
-  // connection methods
-  api.connect = function (host, port) {
-    pomelo.connect(host, port);
-  };
-  api.disconnect = function () {
-    pomelo.disconnect();
-  };
-  api.isConnected = function () {
-    return pomelo.isConnected();
-  };
+  // current user
+  app.user = new CurrentUser(null, options);
 
-  // pushed event from server
-  var that = this;
-  pomelo.on('all', function (name, data) {
-    options.debug('ws:' + name, data);
-    api.trigger(name, data);
-  });
+  // collections
+  app.groups = new Groups(null, options);
+  app.ones = new Ones(null, options);
+  app.rooms = new Rooms(null, options);
 
-  return api;
+  return app;
 };
