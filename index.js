@@ -1,7 +1,7 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
 
-var Client = require('./lib/ws/index');
+var Ws = require('./lib/ws/index');
 var CurrentUser = require('./lib/models/current-user');
 var Groups = require('./lib/collections/groups');
 var Ones = require('./lib/collections/ones');
@@ -25,7 +25,7 @@ module.exports = function (options) {
   options.app = app;
 
   // ws client
-  app.client = Client(options);
+  app.client = Ws(options);
 
   // current user
   app.user = new CurrentUser(null, options);
