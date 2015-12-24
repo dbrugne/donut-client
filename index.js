@@ -21,7 +21,19 @@ module.exports = function (options) {
   });
 
   // new event emitter as facade
-  var app = _.extend({}, Backbone.Events);
+  var app = _.extend({
+    getFocusedModel: function () {
+      var model = this.rooms.findWhere({focused: true});
+      if (!model) {
+        model = this.ones.findWhere({focused: true});
+        if (!model) {
+          model = this.groups.findWhere({focused: true});
+        }
+      }
+
+      return model; // could be 'undefined'
+    }
+  }, Backbone.Events);
   options.app = app;
 
   // ws client
