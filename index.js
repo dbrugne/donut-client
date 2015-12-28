@@ -32,6 +32,19 @@ module.exports = function (options) {
       }
 
       return model; // could be 'undefined'
+    },
+    setFocusedModel: function (model) {
+      var iterator = function (m) {
+        // set as focused if current model is strictly equal to given model
+        // otherwise set as false
+        m.set('focused', (m === model));
+      };
+
+      this.rooms.each(iterator);
+      this.ones.each(iterator);
+      this.groups.each(iterator);
+
+      this.trigger('focusModelChanged');
     }
   }, Backbone.Events);
   options.app = app;
