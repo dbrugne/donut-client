@@ -45,6 +45,20 @@ module.exports = function (options) {
       this.groups.each(iterator);
 
       this.trigger('focusModelChanged');
+    },
+    getUnviewed: function() {
+      var count = 0;
+      var iterator = function (m) {
+        if (m.get('unviewed')) {
+          count++;
+        }
+      };
+
+      this.rooms.each(iterator);
+      this.ones.each(iterator);
+      this.groups.each(iterator);
+
+      return count;
     }
   }, Backbone.Events);
   options.app = app;
