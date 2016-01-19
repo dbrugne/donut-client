@@ -65,6 +65,23 @@ module.exports = function (options) {
 
   // ws client
   app.client = Ws(options);
+  app.beforeFirstConnection = true;
+  // @todo : unmount this event when needed (mobile logout)
+  app.client.on('welcome', function (data) {
+    if (data.usernameRequired) {
+      return app.trigger('usernameRequired');
+    }
+
+    app.user.onWelcome(data);
+    app.ones.onWelcome(data);
+    app.rooms.onWelcome(data);
+    app.groups.onWelcome(data);
+
+    app.beforeFirstConnection = false;
+
+    // run routing only when everything in IHM is ready
+    app.trigger('ready');
+  });
 
   // current user
   app.user = new CurrentUser(null, options);
