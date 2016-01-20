@@ -22,6 +22,16 @@ module.exports = function (options) {
 
   // new event emitter as facade
   var app = _.extend({
+    reset: function () {
+      // empty stores
+      this.ones.reset();
+      this.rooms.reset();
+      this.groups.reset();
+      this.user.clear();
+
+      // unmount listeners
+      this.client.off(null, null, this);
+    },
     getFocusedModel: function () {
       var model = this.rooms.findWhere({focused: true});
       if (!model) {
@@ -66,22 +76,21 @@ module.exports = function (options) {
   // ws client
   app.client = Ws(options);
   app.beforeFirstConnection = true;
-  // @todo : unmount this event when needed (mobile logout)
   app.client.on('welcome', function (data) {
     if (data.usernameRequired) {
-      return app.trigger('usernameRequired');
+      return this.trigger('usernameRequired');
     }
 
-    app.user.onWelcome(data);
-    app.ones.onWelcome(data);
-    app.rooms.onWelcome(data);
-    app.groups.onWelcome(data);
+    this.user.onWelcome(data);
+    this.ones.onWelcome(data);
+    this.rooms.onWelcome(data);
+    this.groups.onWelcome(data);
 
-    app.beforeFirstConnection = false;
+    this.beforeFirstConnection = false;
 
     // run routing only when everything in IHM is ready
-    app.trigger('ready');
-  });
+    this.trigger('ready');
+  }, app);
 
   // current user
   app.user = new CurrentUser(null, options);
