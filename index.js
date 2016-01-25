@@ -96,13 +96,14 @@ module.exports = function (options) {
     this.trigger('ready');
   }, app);
 
-  // current user
-  app.user = new CurrentUser(null, options);
-
   // collections
   app.groups = new Groups(null, options);
   app.ones = new Ones(null, options);
   app.rooms = new Rooms(null, options);
+
+  // current user
+  // @important: after collection mounting to allow listening on them
+  app.user = new CurrentUser(null, options);
 
   return app;
 };
