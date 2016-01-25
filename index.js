@@ -54,7 +54,7 @@ module.exports = function (options) {
       this.ones.each(iterator);
       this.groups.each(iterator);
 
-      this.trigger('focusModelChanged');
+      this.trigger('focusedModelChanged', model);
     },
     getUnviewed: function() {
       var count = 0;
@@ -85,6 +85,10 @@ module.exports = function (options) {
     this.ones.onWelcome(data);
     this.rooms.onWelcome(data);
     this.groups.onWelcome(data);
+
+    this.trigger('redrawNavigationRooms');
+    this.trigger('redrawNavigationOnes');
+    this.trigger('redrawNavigationGroups');
 
     this.beforeFirstConnection = false;
 
