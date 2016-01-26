@@ -30,7 +30,9 @@ module.exports = function (options) {
       this.user.clear();
 
       // unmount listeners
-      this.client.off(null, null, this);
+      // @todo if unbound this event on .reset() he is not re-bound on next login (.on() is plug on module loading)
+      //       need to introduce a .init() method called on login
+      // this.client.off(null, null, this);
     },
     getFocusedModel: function () {
       var model = this.rooms.findWhere({focused: true});
